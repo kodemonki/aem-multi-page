@@ -1,5 +1,10 @@
 class Component1 extends React.Component {
   render() {
-    return <div>C1 {this.props.data}</div>;
+    return (
+      <div>
+        <h1>Component1</h1>
+        {this.props.data}
+      </div>
+    );
   }
 }

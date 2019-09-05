@@ -6,6 +6,8 @@ const gap = require("gulp-append-prepend");
 const tap = require("gulp-tap");
 const path = require("path");
 
+const browserSync = require("browser-sync").create();
+
 let componentList = "let allComponents = [];\r\n";
 
 function copyHtml() {
@@ -45,11 +47,43 @@ function appendComponentList() {
 }
 
 function build() {
-  return series(copyHtml, copyCore, copyComponents, appendComponentList);
+  return series(
+    copyHtml,
+    copyCore,
+    copyComponents,
+    appendComponentList,
+    initBrowser,
+    watchFiles
+  );
+}
+
+function rebuild() {
+  return series(
+    copyHtml,
+    copyCore,
+    copyComponents,
+    appendComponentList,
+    reloadBrowser,
+    watchFiles
+  );
 }
 
 function watchFiles() {
-  watch("src/**/*.*", build());
+  watch("src/**/*.*", rebuild());
 }
 
+function initBrowser(done) {
+  browserSync.init({
+    server: {
+      baseDir: "./build/"
+    }
+  });
+  done();
+}
+function reloadBrowser(done) {
+  browserSync.reload();
+  done();
+}
+
+exports.watch = watchFiles();
 exports.default = build();
