@@ -1,0 +1,23 @@
+{
+  "name": "reactnonspa",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "gulp": "^4.0.2",
+    "gulp-append-prepend": "^1.0.8",
+    "gulp-babel": "^8.0.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-tap": "^2.0.0"
+  },
+  "dependencies": {
+    "babel-plugin-transform-react-jsx": "^6.24.1"
+  }
+}
