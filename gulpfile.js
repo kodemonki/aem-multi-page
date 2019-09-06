@@ -73,24 +73,24 @@ let rebuild = () => {
 let buildTestComponentIndex = done => {
   componentListNames.sort();
   let head =
-    '<head><script src="https://unpkg.com/react@16/umd/react.development.js"></script><script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script></head>';
+    '<head><script src="https://unpkg.com/react@16/umd/react.development.js"></script><script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"></head>';
 
   let bodyPrefix = "<body>";
   let bodySuffix =
     '<script src="js/components.js"></script><script src="js/reactRenderer.js"></script></body>';
 
   let content =
-    "<h1>Components</h2><table border='1' cellpadding='10' cellspacing='10'>";
+    "<h1 style='text-align:center'>Components</h2><div style='display:flex;flex-wrap:wrap;justify-content:center;width:100%;'>";
   for (let i = 0; i < componentListNames.length; i++) {
     content +=
-      "<tr><td><a href='/" +
+      "<div style='margin:20px'><a href='/" +
       pages +
       componentListNames[i] +
-      ".html'>" +
+      ".html'><button type='button' class='btn btn-primary'>" +
       componentListNames[i] +
-      "</a></td></tr>";
+      "</button></a></div>";
   }
-  content += "</table>";
+  content += "</div>";
 
   let body = bodyPrefix + content + bodySuffix;
   let html = "<html>" + head + body + "</html>";
