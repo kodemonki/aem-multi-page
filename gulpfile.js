@@ -1,24 +1,24 @@
 const gulp = require("gulp");
-const { watch, series } = require("gulp");
+const { watch, series, parallel } = require("gulp");
 const babel = require("gulp-babel");
 const concat = require("gulp-concat");
 const gap = require("gulp-append-prepend");
 const tap = require("gulp-tap");
 const path = require("path");
-
 const browserSync = require("browser-sync").create();
 
-let componentList = "let allComponents = [];\r\n";
+let componentList = null;
 
-function copyHtml() {
+let copyHtml = () => {
   return gulp.src("src/index.html").pipe(gulp.dest("build/"));
-}
+};
 
-function copyCore() {
+let copyCore = () => {
   return gulp.src("src/js/core/**.js").pipe(gulp.dest("build/js/"));
-}
+};
 
-function copyComponents() {
+let copyComponents = () => {
+  componentList = "let allComponents = [];\r\n";
   return gulp
     .src("src/js/components/**/*.js")
     .pipe(
@@ -37,53 +37,47 @@ function copyComponents() {
     )
     .pipe(concat("components.js"))
     .pipe(gulp.dest("build/js/"));
-}
+};
 
-function appendComponentList() {
+let appendComponentList = () => {
   return gulp
     .src("build/js/components.js")
     .pipe(gap.appendText(componentList))
     .pipe(gulp.dest("build/js/"));
-}
+};
 
-function build() {
+let build = () => {
   return series(
-    copyHtml,
-    copyCore,
-    copyComponents,
+    parallel(copyHtml, copyCore, copyComponents),
     appendComponentList,
-    initBrowser,
-    watchFiles
+    parallel(initBrowser, watchFiles)
   );
-}
+};
 
-function rebuild() {
+let rebuild = () => {
   return series(
-    copyHtml,
-    copyCore,
-    copyComponents,
+    parallel(copyHtml, copyCore, copyComponents),
     appendComponentList,
-    reloadBrowser,
-    watchFiles
+    parallel(reloadBrowser, watchFiles)
   );
-}
+};
 
-function watchFiles() {
+let watchFiles = () => {
   watch("src/**/*.*", rebuild());
-}
+};
 
-function initBrowser(done) {
+let initBrowser = done => {
   browserSync.init({
     server: {
       baseDir: "./build/"
     }
   });
   done();
-}
-function reloadBrowser(done) {
+};
+
+let reloadBrowser = done => {
   browserSync.reload();
   done();
-}
+};
 
-exports.watch = watchFiles();
 exports.default = build();
