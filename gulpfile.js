@@ -65,13 +65,13 @@ let rebuild = () => {
   return series(
     parallel(copyCore, copyComponents),
     appendComponentList,
-    buildTestComponentIndex,
     buildTestComponentPages,
     parallel(reloadBrowser, watchFiles)
   );
 };
 
 let buildTestComponentIndex = done => {
+  componentListNames.sort();
   let head =
     '<head><script src="https://unpkg.com/react@16/umd/react.development.js"></script><script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script></head>';
 
