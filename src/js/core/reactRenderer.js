@@ -1,9 +1,9 @@
 let reactRenderer = (function() {
   let init = () => {
-    findComponents();
+    renderComponents();
   };
 
-  let findComponents = () => {
+  let renderComponents = () => {
     let elements = document.querySelectorAll("[data-component]");
     for (i = 0; i < elements.length; i++) {
       let element = elements[i];
