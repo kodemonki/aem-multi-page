@@ -27,5 +27,4 @@ let reactRenderer = (function() {
     init: init
   };
 })();
-
 reactRenderer.init();

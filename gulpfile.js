@@ -13,7 +13,7 @@ const tap = require("gulp-tap");
 const browserSync = require("browser-sync").create();
 
 const path = require("path");
-var fs = require("fs");
+const fs = require("fs");
 
 const src = "src/";
 const dest = "build/";
@@ -21,11 +21,6 @@ const pages = "pages/";
 
 let componentListJs = null;
 let componentListNames = [];
-let partsDone = 0;
-
-let copyCore = () => {
-  return gulp.src(src + "js/core/**.js").pipe(gulp.dest(dest + "js/"));
-};
 
 let copyComponents = () => {
   componentListJs = "let allComponents = [];\r\n";
@@ -69,11 +64,10 @@ let rollupModules = () => {
 let buildTestComponentIndex = done => {
   componentListNames.sort();
   let head =
-    '<head><script src="https://unpkg.com/react@16/umd/react.development.js"></script><script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"></head>';
+    '<head><script src="https://unpkg.com/react@16/umd/react.development.js"></script><script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"><script>var process = {env: {}};</script></head>';
 
   let bodyPrefix = "<body>";
-  let bodySuffix =
-    '<script src="js/components.js"></script><script src="js/reactRenderer.js"></script></body>';
+  let bodySuffix = '<script src="js/bundle.js"></script></script></body>';
 
   let content =
     "<h1 style='text-align:center'>Components</h2><div style='display:flex;flex-wrap:wrap;justify-content:center;width:100%;'>";
@@ -97,7 +91,7 @@ let buildTestComponentIndex = done => {
 let buildTestComponentPages = done => {
   partsDone = 0;
   let head =
-    '<head><script src="https://unpkg.com/react@16/umd/react.development.js"></script><script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script></head>';
+    '<head><script src="https://unpkg.com/react@16/umd/react.development.js"></script><script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script><script>var process = {env: {}};</script></head>';
 
   let bodyPrefix = "<body>";
   let bodySuffix = '<script src="../js/bundle.js"></script></body>';
@@ -120,7 +114,7 @@ let buildTestComponentPages = done => {
 
 let build = () => {
   return series(
-    parallel(copyCore, copyComponents),
+    copyComponents,
     appendComponentList,
     mergeCoreAndComponents,
     rollupModules,
@@ -132,7 +126,7 @@ let build = () => {
 
 let rebuild = () => {
   return series(
-    parallel(copyCore, copyComponents),
+    copyComponents,
     appendComponentList,
     mergeCoreAndComponents,
     rollupModules,
