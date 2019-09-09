@@ -1,6 +1,12 @@
 const gulp = require("gulp");
 const { watch, series, parallel } = require("gulp");
-const babel = require("gulp-babel");
+
+const rollup = require("gulp-better-rollup");
+const babel = require("rollup-plugin-babel");
+const resolve = require("rollup-plugin-node-resolve");
+const commonjs = require("rollup-plugin-commonjs");
+
+//const babel = require("gulp-babel");
 const concat = require("gulp-concat");
 const gap = require("gulp-append-prepend");
 const tap = require("gulp-tap");
@@ -35,39 +41,29 @@ let copyComponents = () => {
           "allComponents['" + folder + "'] = " + folder + ";\r\n";
       })
     )
-    .pipe(
-      babel({
-        plugins: ["transform-react-jsx"]
-      })
-    )
-    .pipe(concat("components.js"))
+    .pipe(concat("bundle.js"))
     .pipe(gulp.dest(dest + "js/"));
 };
 
 let appendComponentList = () => {
   return gulp
-    .src(dest + "js/components.js")
+    .src(dest + "js/bundle.js")
     .pipe(gap.appendText(componentListJs))
     .pipe(gulp.dest(dest + "js/"));
 };
 
-let build = () => {
-  return series(
-    parallel(copyCore, copyComponents),
-    appendComponentList,
-    buildTestComponentIndex,
-    buildTestComponentPages,
-    parallel(initBrowser, watchFiles)
-  );
+let mergeCoreAndComponents = () => {
+  return gulp
+    .src([dest + "js/bundle.js", src + "js/core/**/*.js"])
+    .pipe(concat("bundle.js"))
+    .pipe(gulp.dest(dest + "js/"));
 };
 
-let rebuild = () => {
-  return series(
-    parallel(copyCore, copyComponents),
-    appendComponentList,
-    buildTestComponentPages,
-    parallel(reloadBrowser, watchFiles)
-  );
+let rollupModules = () => {
+  return gulp
+    .src(dest + "js/bundle.js")
+    .pipe(rollup({ plugins: [babel(), resolve(), commonjs()] }, "umd"))
+    .pipe(gulp.dest(dest + "js/"));
 };
 
 let buildTestComponentIndex = done => {
@@ -104,8 +100,7 @@ let buildTestComponentPages = done => {
     '<head><script src="https://unpkg.com/react@16/umd/react.development.js"></script><script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script></head>';
 
   let bodyPrefix = "<body>";
-  let bodySuffix =
-    '<script src="../js/components.js"></script><script src="../js/reactRenderer.js"></script></body>';
+  let bodySuffix = '<script src="../js/bundle.js"></script></body>';
 
   for (let i = 0; i < componentListNames.length; i++) {
     let content =
@@ -121,6 +116,29 @@ let buildTestComponentPages = done => {
   }
 
   done();
+};
+
+let build = () => {
+  return series(
+    parallel(copyCore, copyComponents),
+    appendComponentList,
+    mergeCoreAndComponents,
+    rollupModules,
+    buildTestComponentIndex,
+    buildTestComponentPages,
+    parallel(initBrowser, watchFiles)
+  );
+};
+
+let rebuild = () => {
+  return series(
+    parallel(copyCore, copyComponents),
+    appendComponentList,
+    mergeCoreAndComponents,
+    rollupModules,
+    buildTestComponentPages,
+    parallel(reloadBrowser, watchFiles)
+  );
 };
 
 let watchFiles = () => {

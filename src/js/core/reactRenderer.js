@@ -5,7 +5,7 @@ let reactRenderer = (function() {
 
   let renderComponents = () => {
     let elements = document.querySelectorAll("[data-component]");
-    for (i = 0; i < elements.length; i++) {
+    for (let i = 0; i < elements.length; i++) {
       let element = elements[i];
       let componentClass = getComponentClass(
         element.getAttribute("data-component")
