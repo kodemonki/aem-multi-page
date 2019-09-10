@@ -1,6 +1,8 @@
 const gulp = require("gulp");
 const { watch, series, parallel } = require("gulp");
 
+const gulpbabel = require("gulp-babel");
+
 const rollup = require("gulp-better-rollup");
 const babel = require("rollup-plugin-babel");
 const resolve = require("rollup-plugin-node-resolve");
@@ -48,7 +50,11 @@ let appendComponentList = () => {
 
 let mergeCoreAndComponents = () => {
   return gulp
-    .src([dest + "js/bundle.js", src + "js/core/**/*.js"])
+    .src([
+      src + "js/imports.js",
+      dest + "js/bundle.js",
+      src + "js/core/**/*.js"
+    ])
     .pipe(concat("bundle.js"))
     .pipe(gulp.dest(dest + "js/"));
 };
