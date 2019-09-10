@@ -9,3 +9,11 @@ class Component4 extends React.Component {
     );
   }
 }
+
+Component4.propTypes = {
+  title: PropTypes.string
+};
+
+Component4.defaultProps = {
+  title: "Default title"
+};

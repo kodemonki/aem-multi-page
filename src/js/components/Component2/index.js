@@ -7,3 +7,11 @@ class Component2 extends React.Component {
     );
   }
 }
+
+Component2.propTypes = {
+  title: PropTypes.string
+};
+
+Component2.defaultProps = {
+  title: "Default title"
+};

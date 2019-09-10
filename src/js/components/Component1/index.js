@@ -1,7 +1,3 @@
-import PropTypes from "prop-types";
-//const PropTypes = require("prop-types");
-//import $ from "jQuery";
-
 class Component1 extends React.Component {
   render() {
     return (
