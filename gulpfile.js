@@ -8,6 +8,10 @@ const babel = require("rollup-plugin-babel");
 const resolve = require("rollup-plugin-node-resolve");
 const commonjs = require("rollup-plugin-commonjs");
 
+const sass = require("gulp-sass");
+const nodeSass = require("node-sass");
+sass.compiler = nodeSass;
+
 const concat = require("gulp-concat");
 const gap = require("gulp-append-prepend");
 const tap = require("gulp-tap");
@@ -18,15 +22,22 @@ const fs = require("fs");
 
 const src = "src/";
 const dest = "build/";
-const pages = "pages/";
 
 let componentListJs = null;
 let componentListNames = [];
 
+let compileSass = () => {
+  return gulp
+    .src(src + "styles/**/*.scss")
+    .pipe(sass().on("error", sass.logError))
+    .pipe(concat("styles.css"))
+    .pipe(gulp.dest(dest + "css/"));
+};
+
 let copyComponents = () => {
   componentListJs = "let allComponents = [];\r\n";
   return gulp
-    .src(src + "js/components/**/*.js")
+    .src([src + "pages/**/*.js", src + "components/**/*.js"])
     .pipe(
       tap(function(file, t) {
         let fp = path.dirname(file.path);
@@ -50,11 +61,7 @@ let appendComponentList = () => {
 
 let mergeCoreAndComponents = () => {
   return gulp
-    .src([
-      src + "js/imports.js",
-      dest + "js/bundle.js",
-      src + "js/core/**/*.js"
-    ])
+    .src([src + "imports.js", dest + "js/bundle.js", src + "core/**/*.js"])
     .pipe(concat("bundle.js"))
     .pipe(gulp.dest(dest + "js/"));
 };
@@ -69,21 +76,38 @@ let rollupModules = () => {
 let buildTestComponentIndex = done => {
   componentListNames.sort();
   let head =
-    '<head><script src="https://unpkg.com/react@16/umd/react.development.js"></script><script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"><script>var process = {env: {}};</script></head>';
+    '<head><script src="https://unpkg.com/react@16/umd/react.development.js"></script><script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"><link rel="stylesheet" type="text/css" href="css/styles.css"><script>var process = {env: {}};</script></head>';
 
   let bodyPrefix = "<body>";
-  let bodySuffix = '<script src="js/bundle.js"></script></script></body>';
+  let bodySuffix = '<script src="js/bundle.js"></script></body>';
 
   let content =
-    "<h1 style='text-align:center'>Components</h2><div style='display:flex;flex-wrap:wrap;justify-content:center;width:100%;'>";
+    "<img src='https://www.netbuilder.com/wp-content/uploads/2017/04/NB_LOGO_LANDSCAPE_BLACK_TEXT.png' style='width:100%;max-width:200px;margin-left:20px;margin-top:20px'/>";
+  content +=
+    "<h3 style='text-align:center'>TestPages</h3><div style='display:flex;flex-wrap:wrap;justify-content:center;width:100%;'>";
   for (let i = 0; i < componentListNames.length; i++) {
-    content +=
-      "<div style='margin:20px'><a href='/" +
-      pages +
-      componentListNames[i] +
-      ".html'><button type='button' class='btn btn-primary'>" +
-      componentListNames[i] +
-      "</button></a></div>";
+    if (componentListNames[i].indexOf("TestPage") > -1) {
+      content +=
+        "<div style='margin:20px'><a href='/" +
+        componentListNames[i] +
+        ".html'><button type='button' class='btn btn-primary'>" +
+        componentListNames[i] +
+        "</button></a></div>";
+    }
+  }
+  content += "</div>";
+
+  content +=
+    "<h3 style='text-align:center'>Components</h3><div style='display:flex;flex-wrap:wrap;justify-content:center;width:100%;'>";
+  for (let i = 0; i < componentListNames.length; i++) {
+    if (componentListNames[i].indexOf("TestPage") === -1) {
+      content +=
+        "<div style='margin:20px'><a href='/" +
+        componentListNames[i] +
+        ".html'><button type='button' class='btn btn-primary'>" +
+        componentListNames[i] +
+        "</button></a></div>";
+    }
   }
   content += "</div>";
 
@@ -94,12 +118,11 @@ let buildTestComponentIndex = done => {
 };
 
 let buildTestComponentPages = done => {
-  partsDone = 0;
   let head =
-    '<head><script src="https://unpkg.com/react@16/umd/react.development.js"></script><script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script><script>var process = {env: {}};</script></head>';
+    '<head><script src="https://unpkg.com/react@16/umd/react.development.js"></script><script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script><link rel="stylesheet" type="text/css" href="css/styles.css"><script>var process = {env: {}};</script></head>';
 
   let bodyPrefix = "<body>";
-  let bodySuffix = '<script src="../js/bundle.js"></script></body>';
+  let bodySuffix = '<script src="js/bundle.js"></script></body>';
 
   for (let i = 0; i < componentListNames.length; i++) {
     let content =
@@ -108,10 +131,8 @@ let buildTestComponentPages = done => {
       '" data-props="{}"></div>';
     let body = bodyPrefix + content + bodySuffix;
     let html = "<html>" + head + body + "</html>";
-    if (!fs.existsSync(dest + pages)) {
-      fs.mkdirSync(dest + pages, 0744);
-    }
-    fs.writeFileSync(dest + pages + componentListNames[i] + ".html", html);
+
+    fs.writeFileSync(dest + componentListNames[i] + ".html", html);
   }
 
   done();
@@ -119,6 +140,7 @@ let buildTestComponentPages = done => {
 
 let build = () => {
   return series(
+    compileSass,
     copyComponents,
     appendComponentList,
     mergeCoreAndComponents,
@@ -131,6 +153,7 @@ let build = () => {
 
 let rebuild = () => {
   return series(
+    compileSass,
     copyComponents,
     appendComponentList,
     mergeCoreAndComponents,

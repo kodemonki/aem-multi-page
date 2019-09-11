@@ -1,0 +1,10 @@
+$font-stack: Helvetica, sans-serif;
+
+body {
+  font: 100% $font-stack;
+  margin: 0;
+}
+div {
+  padding: 10px;
+  box-sizing: border-box;
+}

@@ -2,7 +2,8 @@ class Component2 extends React.Component {
   render() {
     return (
       <div>
-        <h1>Component2 React Rendered davexxx</h1>
+        <h2>Component2</h2>
+        <img src="https://picsum.photos/300/200" />
       </div>
     );
   }
