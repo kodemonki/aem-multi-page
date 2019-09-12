@@ -2,6 +2,6 @@
 
 ## Instructions
 
-clone repo
-npm i
-gulp
+1. clone repo
+2. npm i
+3. gulp
