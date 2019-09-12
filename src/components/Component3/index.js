@@ -13,19 +13,6 @@ class Component3 extends React.Component {
           sodales ante sed, lacinia mauris. Interdum et malesuada fames ac ante
           ipsum primis in faucibus. Suspendisse volutpat posuere pharetra.
         </p>
-        <p>
-          Phasellus sit amet pharetra sapien. Quisque enim orci, imperdiet sed
-          nisi elementum, rutrum tincidunt leo. Praesent auctor mauris in
-          fermentum hendrerit. Morbi at luctus leo. Praesent ut risus facilisis,
-          rutrum metus faucibus, mattis nibh. Praesent volutpat et nunc vel
-          vestibulum. Nullam imperdiet euismod lacus, ac pharetra est. Mauris
-          laoreet nulla hendrerit metus interdum imperdiet. Donec facilisis elit
-          sem, ultrices pellentesque tortor ultrices at. Proin massa enim,
-          egestas vel consectetur eget, suscipit venenatis enim. Suspendisse id
-          nisi in felis convallis finibus. Integer luctus fermentum velit, eu
-          varius nisi. Nam leo neque, suscipit sed dui eget, porttitor luctus
-          lorem. Curabitur mauris magna, iaculis at congue ac, aliquam non est.
-        </p>
       </div>
     );
   }
