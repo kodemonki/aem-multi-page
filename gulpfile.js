@@ -104,7 +104,7 @@ let rollupModules = () => {
 let buildTestComponentIndex = done => {
   componentListNames.sort();
   let head =
-    '<head><script src="https://unpkg.com/react@16/umd/react.development.js"></script><script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"><link rel="stylesheet" type="text/css" href="css/styles.css"><script>var process = {env: {}};</script></head>';
+    '<head><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"><link rel="stylesheet" type="text/css" href="css/styles.css"><script>var process = {env: {}};</script></head>';
 
   let bodyPrefix = "<body>";
   let bodySuffix = '<script src="js/bundle.js"></script></body>';
