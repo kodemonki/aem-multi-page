@@ -1,4 +1,4 @@
-class Component1 extends React.Component {
+class Component1 extends Component {
   testFunction = () => {
     console.log("yay");
   };
