@@ -1,4 +1,7 @@
 class Component1 extends React.Component {
+  testFunction = () => {
+    console.log("yay");
+  };
   render() {
     return (
       <div>
