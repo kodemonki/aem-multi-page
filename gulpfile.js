@@ -23,6 +23,8 @@ const fs = require("fs");
 const src = "src/";
 const dest = "build/";
 
+const isWin = process.platform === "win32";
+
 let componentListJs = null;
 let componentListNames = [];
 
@@ -41,7 +43,12 @@ let copyComponents = () => {
     .pipe(
       tap(function(file, t) {
         let fp = path.dirname(file.path);
-        let arr = fp.split("/");
+        let arr = [];
+        if (isWin === false) {
+          arr = fp.split("/");
+        } else {
+          arr = fp.split("\\");
+        }
         let folder = arr[arr.length - 1];
         componentListNames.push(folder);
         componentListJs +=
